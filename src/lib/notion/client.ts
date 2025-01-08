@@ -64,6 +64,9 @@ let dbCache: Database | null = null
 
 const numberOfRetry = 2
 
+console.log('DATABASE_ID:', DATABASE_ID);
+console.log('NOTION_API_SECRET length:', NOTION_API_SECRET.length);
+
 export async function getAllPosts(): Promise<Post[]> {
   if (postsCache !== null) {
     return Promise.resolve(postsCache)
