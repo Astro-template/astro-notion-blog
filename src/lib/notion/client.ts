@@ -1,6 +1,4 @@
-import config from '../../config'
-import * as fs from 'node:fs'
-import { createWriteStream } from 'node:fs'
+import fs, { createWriteStream } from 'node:fs'
 import { pipeline } from 'node:stream/promises'
 import axios, { AxiosResponse } from 'axios'
 import sharp from 'sharp'
@@ -58,13 +56,8 @@ import type {
 import { Client, APIResponseError } from '@notionhq/client'
 
 const client = new Client({
-  auth: config.notion.apiSecret
+  auth: NOTION_API_SECRET,
 })
-
-// 添加调试日志
-console.log('Testing Notion connection...')
-console.log('Database ID:', config.notion.databaseId)
-console.log('API Secret length:', config.notion.apiSecret?.length)
 
 let postsCache: Post[] | null = null
 let dbCache: Database | null = null

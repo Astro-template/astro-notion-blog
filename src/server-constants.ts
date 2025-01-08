@@ -1,7 +1,7 @@
-import config from './config'
-
-export const NOTION_API_SECRET = config.notion.apiSecret
-export const DATABASE_ID = config.notion.databaseId
+export const NOTION_API_SECRET =
+  import.meta.env.NOTION_API_SECRET || process.env.NOTION_API_SECRET || ''
+export const DATABASE_ID =
+  import.meta.env.DATABASE_ID || process.env.DATABASE_ID || ''
 
 export const CUSTOM_DOMAIN =
   import.meta.env.CUSTOM_DOMAIN || process.env.CUSTOM_DOMAIN || '' // <- Set your costom domain if you have. e.g. alpacat.com
