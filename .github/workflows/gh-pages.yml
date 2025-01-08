@@ -11,6 +11,12 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    # 添加权限配置
+    permissions:
+      contents: write      # 这允许推送到 gh-pages 分支
+      pages: write        # 这允许部署到 GitHub Pages
+      id-token: write     # 这允许验证部署
+
     steps:
       - name: Checkout
         uses: actions/checkout@v3
