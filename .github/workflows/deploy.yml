@@ -87,14 +87,15 @@ jobs:
           CF_PAGES: true
 
       # 部署 worker
-      - name: Deploy worker
+      - name: Upload worker
         run: |
-          cd worker
-          npm run deploy
+          curl --fail-with-body -X PUT https://api.cloudflare.com/client/v4/accounts/${{ steps.fetch_account_id.outputs.account_id }}/workers/scripts/notion-blog-worker/content \
+            --header 'Authorization: Bearer '${{ secrets.CLOUDFLARE_API_TOKEN }} \
+            -F 'index.js=@worker/dist/index.js;type=application/javascript+module' \
+            -F 'metadata={"main_module": "index.js"}'
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          NOTION_API_SECRET: ${{ secrets.NOTION_API_SECRET }}
-          DATABASE_ID: ${{ secrets.DATABASE_ID }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ steps.fetch_account_id.outputs.account_id }}
 
       # 部署页面
       - name: Deploy to Pages

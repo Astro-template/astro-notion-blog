@@ -1,9 +1,0 @@
-name = "notion-blog-worker"
-
-compatibility_date = "2024-01-01"
-main = "src/index.ts"
-[build]
-command = "npm run build"
-
-[triggers]
-crons = ["0 0,12 * * *"]  # 每天 UTC 0:00 和 12:00 运行 
