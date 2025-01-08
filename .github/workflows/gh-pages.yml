@@ -15,12 +15,8 @@ permissions:
   deployments: write
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    
     steps:
       - uses: actions/checkout@v4
 
@@ -54,15 +50,9 @@ jobs:
           NOTION_API_SECRET: ${{ secrets.NOTION_API_SECRET }}
           DATABASE_ID: ${{ secrets.DATABASE_ID }}
 
-      # 配置 GitHub Pages
-      - name: Setup Pages
-        uses: actions/configure-pages@v3
-        with:
-          enablement: true
-          static_site_generator: astro
-
-      # 部署步骤
-      - uses: peaceiris/actions-gh-pages@v3
+      # 部署到外部仓库
+      - name: Deploy to External Repository
+        uses: peaceiris/actions-gh-pages@v3
         with:
           personal_token: ${{ secrets.GIT_TOKEN }}
           external_repository: 1staihub/1staihub.github.io
@@ -73,3 +63,17 @@ jobs:
           enable_jekyll: false
           # 确保 .nojekyll 文件被复制
           exclude_assets: '' 
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2 
