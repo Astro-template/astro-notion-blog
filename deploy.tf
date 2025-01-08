@@ -16,15 +16,14 @@ variable "CLOUDFLARE_ACCOUNT_ID" {
 }
 
 # 创建 Cloudflare Pages 项目
-resource "cloudflare_pages_project" "blog_project" {
+resource "cloudflare_pages_project" "astro_notion_blog" {
   account_id        = var.CLOUDFLARE_ACCOUNT_ID
-  name             = "astro-notion-blog"
+  name              = "astro-notion-blog"
   production_branch = "main"
 
   build_config {
     build_command   = "npm run build:cached"
     destination_dir = "dist"
-    root_dir        = "/"
   }
 
   deployment_configs {

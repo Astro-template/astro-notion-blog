@@ -26,3 +26,8 @@ tmp/
 
 public/notion/*
 !public/notion/.gitkeep
+
+# Terraform
+.terraform
+*.tfstate
+*.tfstate.*
