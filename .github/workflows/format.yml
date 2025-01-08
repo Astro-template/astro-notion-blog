@@ -1,25 +1,25 @@
-name: Format
+name: Format Code
 
 on:
   push:
-    branches:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
 
 jobs:
   format:
-    name: Prettier
     runs-on: ubuntu-latest
-
     steps:
-      - name: Check out Git repository
-        uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v3
         with:
-          node-version: 20.x
-
-      - name: Run format
-        run: npm run format
-
-      - uses: stefanzweifel/git-auto-commit-action@v5
+          ref: ${{ github.head_ref }}
+          
+      - name: Format Code
+        uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: Format by GitHub Actions
+          commit_user_name: github-actions[bot]
+          commit_user_email: 41898282+github-actions[bot]@users.noreply.github.com
