@@ -1,0 +1,39 @@
+name: Deploy to GitHub Pages
+
+on:
+  # 触发条件
+  push:
+    branches: [ main ]
+  workflow_dispatch:  # 允许手动触发
+  schedule:
+    - cron: '0 0,12 * * *'  # UTC 0:00 and 12:00 (北京时间 8:00 和 20:00)
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20.18.1'
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build Blog
+        run: npm run build:cached
+        env:
+          NOTION_API_SECRET: ${{ secrets.NOTION_API_SECRET }}
+          DATABASE_ID: ${{ secrets.DATABASE_ID }}
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          # 如果你有自定义域名，取消下面这行的注释并修改
+          # cname: your-custom-domain.com 

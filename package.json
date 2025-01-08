@@ -14,12 +14,13 @@
     "format": "npx prettier --write .",
     "cache:fetch": "node scripts/blog-contents-cache.cjs",
     "cache:purge": "nx reset && rm -f tmp/*",
-    "_fetch-notion-blocks": "node scripts/retrieve-block-children.cjs"
+    "_fetch-notion-blocks": "node scripts/retrieve-block-children.cjs",
+    "test:notion": "node scripts/test-notion.cjs"
   },
   "dependencies": {
     "@astrojs/react": "^3.0.3",
     "@astrojs/rss": "^3.0.0",
-    "@notionhq/client": "^2.2.5",
+    "@notionhq/client": "^2.2.15",
     "@supercharge/promise-pool": "^2.4.0",
     "astro": "^3.3.1",
     "astro-icon": "^0.8.1",
@@ -51,9 +52,11 @@
     "@typescript-eslint/parser": "^6.8.0",
     "@typescript-eslint/typescript-estree": "^6.8.0",
     "cli-progress": "^3.12.0",
+    "dotenv": "^16.4.7",
     "eslint": "^8.51.0",
     "eslint-plugin-astro": "^0.27.0",
-    "nx": "15.5.3"
+    "nx": "15.5.3",
+    "ts-node": "^10.9.1"
   },
   "nx": {
     "targets": {

@@ -33,8 +33,8 @@ const getSite = function () {
 
 // https://astro.build/config
 export default defineConfig({
-  site: getSite(),
-  base: BASE_PATH,
+  site: 'https://<your-username>.github.io',
+  base: '/astro-notion-blog',
   integrations: [
     CoverImageDownloader(),
     CustomIconDownloader(),
