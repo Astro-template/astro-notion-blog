@@ -4,6 +4,11 @@ on:
   push:
     branches: [ main ]
   workflow_dispatch:
+  schedule:
+    - cron: '0 0,12 * * *'  # 每天 UTC 0:00 和 12:00 运行
+    # 北京时间 = UTC + 8
+    # UTC 0:00 = 北京时间 8:00
+    # UTC 12:00 = 北京时间 20:00
 
 jobs:
   deploy:
@@ -34,7 +39,6 @@ jobs:
         uses: cloudflare/pages-action@v1
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CF_ACCOUNT_ID }}
           projectName: astro-notion-blog
           directory: dist
           branch: main 
