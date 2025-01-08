@@ -50,33 +50,12 @@ jobs:
           NOTION_API_SECRET: ${{ secrets.NOTION_API_SECRET }}
           DATABASE_ID: ${{ secrets.DATABASE_ID }}
 
-      # 准备部署
-      - name: Prepare deployment
+      # 禁用 Jekyll
+      - name: Disable Jekyll
         run: |
-          # 确保目标目录存在
-          mkdir -p dist
-          # 在源目录和目标目录都创建 .nojekyll
-          touch .nojekyll dist/.nojekyll
-          # 确保 _config.yml 不存在
-          rm -f dist/_config.yml
-          # 添加说明文件到根目录
-          echo "This site is built with Astro" > dist/.nojekyll
+          touch dist/.nojekyll
 
-      # 克隆并准备目标仓库
-      - name: Prepare target repository
-        run: |
-          git clone https://x-access-token:${{ secrets.GIT_TOKEN }}@github.com/1staihub/1staihub.github.io.git target
-          cd target
-          # 确保目标仓库也有 .nojekyll
-          touch .nojekyll
-          echo "This site is built with Astro" > .nojekyll
-          git add .nojekyll
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
-          git commit -m "Ensure Jekyll is disabled" || true
-          git push || true
-
-      # 部署到外部仓库
+      # 直接部署到目标仓库
       - name: Deploy to External Repository
         uses: peaceiris/actions-gh-pages@v3
         with:
@@ -87,4 +66,6 @@ jobs:
           commit_message: "Deploy: ${{ github.event.head_commit.message }}"
           keep_files: false
           enable_jekyll: false
-          force_orphan: true 
+          force_orphan: true
+          user_name: 'github-actions[bot]'
+          user_email: 'github-actions[bot]@users.noreply.github.com' 
