@@ -1,38 +1,28 @@
-name: Deploy to GitHub Pages
+name: Deploy to Cloudflare Pages
 
 on:
   push:
     branches: [ main ]
   workflow_dispatch:
 
-permissions:
-  contents: write
-
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      deployments: write
     steps:
       - uses: actions/checkout@v4
 
-      # 设置 Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20.18.1'
           cache: 'npm'
 
-      # 安装依赖
       - name: Install dependencies
         run: npm install
 
-      # 创建 .nojekyll 文件
-      - name: Create .nojekyll file
-        run: |
-          touch .nojekyll
-          mkdir -p dist
-          touch dist/.nojekyll
-
-      # 测试 Notion 连接
       - name: Test Notion Connection
         run: |
           echo "Testing Notion connection..."
@@ -41,20 +31,16 @@ jobs:
           NOTION_API_SECRET: ${{ secrets.NOTION_API_SECRET }}
           DATABASE_ID: ${{ secrets.DATABASE_ID }}
 
-      # 构建
       - name: Build
         run: npm run build:cached
         env:
           NOTION_API_SECRET: ${{ secrets.NOTION_API_SECRET }}
           DATABASE_ID: ${{ secrets.DATABASE_ID }}
 
-      # 部署到外部仓库
-      - name: Deploy to External Repository
-        uses: peaceiris/actions-gh-pages@v3
+      - name: Publish to Cloudflare Pages
+        uses: cloudflare/pages-action@v1
         with:
-          personal_token: ${{ secrets.GIT_TOKEN }}
-          external_repository: 1staihub/1staihub.github.io
-          publish_branch: main
-          publish_dir: ./dist
-          commit_message: "Deploy: ${{ github.event.head_commit.message }}"
-          force_orphan: true 
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: astro-notion-blog
+          directory: dist 
