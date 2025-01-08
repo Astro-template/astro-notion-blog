@@ -1,115 +1,89 @@
-English | [日本語](README.ja.md)
+# Astro Notion Blog
 
-# astro-notion-blog
+基于 Astro 和 Notion API 构建的博客系统。支持自动部署到 Cloudflare Pages。
 
-[![GitHub stars](https://img.shields.io/github/stars/otoyo/astro-notion-blog)](https://github.com/otoyo/astro-notion-blog/stargazers)
-[![GitHub license](https://img.shields.io/github/license/otoyo/astro-notion-blog)](https://github.com/otoyo/astro-notion-blog/blob/main/LICENSE)
-[![GitHub sponsors](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86)](https://github.com/sponsors/otoyo)
+## 特性
 
-<img src="https://user-images.githubusercontent.com/1063435/213838069-c9654c32-ec9b-4e82-a3b5-2acbd665b16a.png" width="480">
+- 🚀 基于 Astro 构建，性能优异
+- 📝 使用 Notion 作为 CMS
+- 🔄 自动同步 Notion 内容
+- ⚡ 部署在 Cloudflare Pages
+- 🕒 支持定时更新（每天早 8 点和晚 8 点）
 
-astro-notion-blog enables you to create a blog using [Notion](https://www.notion.so/) and generates it statically, resulting in lightning-fast page views.
+## 部署步骤
 
-- :rocket: **Blazing fast** page views
-- :pencil: With the ability to write blog content in **Notion**
-- :hammer_and_wrench: **Customize** your site's appearance to your liking
-- :white_check_mark: Take advantage of **the official Notion APIs**
+### 1. Fork 项目
 
-## :camera_flash: Screenshots
+点击右上角的 Fork 按钮，将项目复制到你的 GitHub 账号下。
 
-### PC
+### 2. 配置 Notion
 
-<img src="https://github.com/otoyo/astro-notion-blog/assets/1063435/967bbc23-014c-427d-b6cd-02c41822fb45" width="600">
+1. 创建一个 [Notion 集成](https://developers.notion.com/docs/create-a-notion-integration)
+2. 复制 "Internal Integration Token" 作为 `NOTION_API_SECRET`
+3. 在 Notion 中创建一个数据库，并[与集成共享](https://developers.notion.com/docs/create-a-notion-integration#step-2-share-a-database-with-your-integration)
+4. 复制数据库 ID 作为 `DATABASE_ID`
 
-### Smartphone
+### 3. 配置 Cloudflare
 
-<img src="https://github.com/otoyo/astro-notion-blog/assets/1063435/bf1add06-1f1c-42ca-88c9-decb8c0dcf8f" width="300">
+1. 注册 [Cloudflare 账号](https://dash.cloudflare.com/sign-up)
+2. 创建 API Token：
+   - 进入 [API Tokens 页面](https://dash.cloudflare.com/profile/api-tokens)
+   - 创建一个新的 Token，确保有 Pages 的编辑权限
+   - 复制生成的 Token 作为 `CLOUDFLARE_API_TOKEN`
 
-## :globe_with_meridians: Demo
+### 4. 配置 GitHub Secrets
 
-[https://astro-notion-blog.pages.dev](https://astro-notion-blog.pages.dev)
+在你 fork 的仓库中添加以下 Secrets：
 
-## :motor_scooter: Quick Start
+1. 进入 Settings -> Secrets and variables -> Actions
+2. 添加以下 secrets：
+   - `NOTION_API_SECRET`: Notion API 密钥
+   - `DATABASE_ID`: Notion 数据库 ID
+   - `CLOUDFLARE_API_TOKEN`: Cloudflare API Token
 
-### Requirements
+### 5. 启用 GitHub Actions
 
-- [Notion](https://www.notion.so/)
-- [Cloudflare Pages](https://pages.cloudflare.com/)
-- Git
+工作流会自动：
+- 在代码推送时触发部署
+- 每天早 8 点和晚 8 点自动更新内容
+- 支持手动触发部署
 
-### Steps
+## 本地开发
 
-1. If you enjoy using this repo, **don't forget to give it a star!** :wink:
-   - This is very motivating!
-2. Simply duplicate [the blog template](https://otoyo.notion.site/e2c5fa2e8660452988d6137ba57fd974?v=abe305cd8b3d467285e91a2a85f4d8de) into your Notion workspace.
-3. Once you've duplicated the page (database), customize it to your liking by changing the icon, title, and description.
-
-<img src="https://user-images.githubusercontent.com/1063435/223611374-86d7172c-9cda-477b-b8a3-dc724fa7ccf4.png" width="600">
-
-4. For future reference, identify the `DATABASE_ID` by noting the portion of the duplicated page (database) URL that appears as https://notion.so/your-account/<HERE>?v=xxxx.
-
-<img src="https://user-images.githubusercontent.com/1063435/213966685-3a2afed2-45c0-4ea5-8070-e634d8d648de.png" width="260">
-
-<img src="https://user-images.githubusercontent.com/1063435/213966888-c3f1f741-62ac-42f3-9af2-94ab375b5676.png" width="600">
-
-5. [Create an integration](https://developers.notion.com/docs/create-a-notion-integration#step-1-create-an-integration) and note "Internal Integration Token" as `NOTION_API_SECRET`
-6. To integrate your application with Notion, [share a database with your integration](https://developers.notion.com/docs/create-a-notion-integration#step-2-share-a-database-with-your-integration).
-7. To make a copy of this repository in your own account, fork it by clicking on the 'Fork' button in the top-right corner of the repository page.
-8. Go to [Cloudflare Pages](https://pages.cloudflare.com/) and sign in
-9. Create new project with "Connect to Git" with your forked repository `<your-account>/astro-notion-blog`, then click "Begin setup"
-10. In "Build settings" section,
-    1. Select "Astro" as "Framework preset"
-    2. Open "Environment Variables (advanced)" and set `NODE_VERSION`, `NOTION_API_SECRET` and `DATABASE_ID`
-       - `NODE_VERSION` is `20.18.1` or higher
-       - [How to deploy a site with Git](https://docs.astro.build/en/guides/deploy/cloudflare/#how-to-deploy-a-site-with-git) is helpful
-
-<img src="https://user-images.githubusercontent.com/1063435/213967061-06f488fe-0b42-40a5-8f19-ac441f0168ff.png" width="400">
-
-<img src="https://github.com/user-attachments/assets/34fa8e2e-db34-40d3-87a6-acdb0d4e66db" width="600">
-
-11. After clicking the 'Save and Deploy' button, your Notion Blog will be published once the deployment process is complete.
-
-Please note that the astro-notion-blog requires manual deployment every time you publish a new post or make updates. You can deploy manually from the Cloudflare Pages dashboard or set up a scheduled deploy using CI tools such as GitHub Actions.
-
-## :hammer_and_pick: How to customize
-
-### Additional requirements
-
-- Node.js v20.18.1 or higher
-
-### Steps
-
-1. To set your secrets as environment variables, run the following commands in your terminal:
-
-```sh
-export NOTION_API_SECRET=<YOUR_NOTION_API_SECRET>
-export DATABASE_ID=<YOUR_DATABASE_ID>
-```
-
-2. Install dependencies and start local server
-
-```sh
+```bash
+# 安装依赖
 npm install
+
+# 启动开发服务器
 npm run dev
+
+# 构建
+npm run build
+
+# 预览构建结果
+npm run preview
 ```
 
-3. Open [http://localhost:4321](http://localhost:4321) in your browser
-4. Press `Ctrl+C` in the terminal to stop
+## 环境变量
 
-### For more information
+创建 `.env` 文件：
 
-See [wiki](https://github.com/otoyo/astro-notion-blog/wiki).
+```env
+NOTION_API_SECRET=your_notion_api_secret
+DATABASE_ID=your_database_id
+```
 
-## :lady_beetle: Bug reports & feature requests
+## 自定义域名
 
-To report an issue, please create a new Issue. You can use **either English or Japanese** to describe the issue. :wink:
+1. 在 Cloudflare Pages 中配置自定义域名
+2. 更新 `SITE_URL` 环境变量（可选）
 
-## :two_hearts: Sponsorship
+## 许可证
 
-If you like astro-notion-blog, sponsor me so that I can keep on developing software. Thank you.
+MIT
 
-[![GitHub sponsors](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86)](https://github.com/sponsors/otoyo)
+## 致谢
 
----
-
-astro-notion-blog is based [otoyo/notion-blog](https://github.com/otoyo/notion-blog)
+- [Astro](https://astro.build)
+- [Notion API](https://developers.notion.com)
+- [Cloudflare Pages](https://pages.cloudflare.com)
