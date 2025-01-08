@@ -36,6 +36,8 @@ jobs:
         env:
           NOTION_API_SECRET: ${{ secrets.NOTION_API_SECRET }}
           DATABASE_ID: ${{ secrets.DATABASE_ID }}
+          CF_PAGES: true
+          CF_PAGES_URL: ${{ secrets.CF_PAGES_URL }}
 
       - name: Publish to Cloudflare Pages
         uses: cloudflare/pages-action@v1
