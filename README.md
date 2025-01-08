@@ -36,29 +36,47 @@
    - 选择 "Add connections"
    - 找到并选择你刚创建的集成
 
-### 3. 部署到 Cloudflare Pages
+### 3. 配置 GitHub Secrets
 
-1. 登录 [Cloudflare Pages](https://pages.cloudflare.com)
+在你 fork 的仓库中添加以下 Secrets：
 
-2. 创建新项目：
-   - 点击 "Create a project"
-   - 选择 "Connect to Git"
-   - 选择你的 GitHub 仓库
-   - 点击 "Begin setup"
+1. `CLOUDFLARE_API_TOKEN`：
+   - 访问 [Cloudflare Dashboard](https://dash.cloudflare.com/profile/api-tokens)
+   - 创建新的 API Token
+   - 选择 "Edit Cloudflare Workers" 模板
+   - 添加 "Pages" 权限
+   - 需要以下权限：
+     * Account.Workers Scripts:Edit
+     * Account.Workers Routes:Edit
+     * Account.Pages:Edit
+     * Account.Account Settings:Read
 
-3. 配置构建设置：
-   - 项目名称：`astro-notion-blog`
-   - 生产分支：`main`
-   - 构建设置：
-     - Framework preset: Astro
-     - Build command: `npm run build:cached`
-     - Build output directory: `dist`
-   - 环境变量：
-     - `NOTION_API_SECRET`: Notion API 密钥
-     - `DATABASE_ID`: Notion 数据库 ID
-     - `NODE_VERSION`: 20.18.1
+2. `NOTION_API_SECRET`：
+   - 使用之前创建的 Notion Integration Token
 
-4. 点击 "Save and Deploy"
+3. `DATABASE_ID`：
+   - 使用之前复制的 Notion 数据库 ID
+
+### 4. 配置环境变量（可选）
+
+在 GitHub 仓库的 Settings -> Environments -> Production 中添加以下环境变量：
+
+1. `SITE_URL`：你的自定义域名（如果有）
+2. `CUSTOM_DOMAIN`：你的自定义域名（如果有）
+3. `BASE_PATH`：如果部署在子目录，添加路径（如 `/blog`）
+4. `CACHE_CONCURRENCY`：Notion 内容同步的并发数（默认为 5）
+
+### 5. 启用 GitHub Actions
+
+1. 访问你 fork 的仓库的 Actions 页面
+2. 点击 "I understand my workflows, go ahead and enable them"
+3. GitHub Actions 将自动运行部署流程
+4. 工作流程会：
+   - 每次推送到 main 分支时自动部署
+   - 每天早 8 点和晚 8 点自动同步 Notion 内容
+   - 支持手动触发部署（在 Actions 页面点击 "Run workflow"）
+
+部署完成后，你可以在 Cloudflare Pages 中找到你的站点地址。
 
 ## 本地开发
 
@@ -87,8 +105,7 @@ DATABASE_ID=your_database_id
 
 ## 自定义域名
 
-1. 在 Cloudflare Pages 中配置自定义域名
-2. 更新 `SITE_URL` 环境变量（可选）
+在 Cloudflare Pages 中配置自定义域名。
 
 ## 许可证
 
