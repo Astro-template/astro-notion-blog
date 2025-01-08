@@ -11,7 +11,7 @@ const getSite = function () {
   }
 
   if (process.env.CF_PAGES) {
-    return new URL(BASE_PATH, process.env.CF_PAGES_URL || 'https://astro-notion-blog.pages.dev').toString();
+    return new URL(BASE_PATH, 'https://astro-notion-blog.pages.dev').toString();
   }
 
   return new URL(BASE_PATH, 'http://localhost:4321').toString();

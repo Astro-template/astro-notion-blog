@@ -23,26 +23,18 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Test Notion Connection
-        run: |
-          echo "Testing Notion connection..."
-          node scripts/test-notion.cjs
-        env:
-          NOTION_API_SECRET: ${{ secrets.NOTION_API_SECRET }}
-          DATABASE_ID: ${{ secrets.DATABASE_ID }}
-
       - name: Build
         run: npm run build:cached
         env:
           NOTION_API_SECRET: ${{ secrets.NOTION_API_SECRET }}
           DATABASE_ID: ${{ secrets.DATABASE_ID }}
           CF_PAGES: true
-          CF_PAGES_URL: ${{ secrets.CF_PAGES_URL }}
 
-      - name: Publish to Cloudflare Pages
+      - name: Deploy to Cloudflare Pages
         uses: cloudflare/pages-action@v1
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          accountId: ${{ secrets.CF_ACCOUNT_ID }}
           projectName: astro-notion-blog
-          directory: dist 
+          directory: dist
+          branch: main 
