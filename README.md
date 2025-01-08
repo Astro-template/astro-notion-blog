@@ -18,10 +18,24 @@
 
 ### 2. 配置 Notion
 
-1. 创建一个 [Notion 集成](https://developers.notion.com/docs/create-a-notion-integration)
-2. 复制 "Internal Integration Token" 作为 `NOTION_API_SECRET`
-3. 在 Notion 中创建一个数据库，并[与集成共享](https://developers.notion.com/docs/create-a-notion-integration#step-2-share-a-database-with-your-integration)
-4. 复制数据库 ID 作为 `DATABASE_ID`
+1. 创建 Notion 集成：
+   - 访问 [Notion Developers](https://www.notion.so/my-integrations)
+   - 点击 "New integration"
+   - 填写名称（如 "My Blog"）
+   - 选择关联的工作区
+   - 点击 "Submit" 创建集成
+   - 复制显示的 "Internal Integration Token" 作为 `NOTION_API_SECRET`
+
+2. 获取数据库 ID：
+   - 在 Notion 中打开你的数据库页面
+   - 从浏览器地址栏复制数据库 ID
+   - 地址格式：`https://www.notion.so/{workspace}/{database_id}?v={view_id}`
+   - 复制其中的 `database_id` 部分（32位字符）作为 `DATABASE_ID`
+
+3. 授权集成访问：
+   - 在数据库页面点击右上角的 "•••"
+   - 选择 "Add connections"
+   - 找到并选择你刚创建的集成
 
 ### 3. 配置 Cloudflare
 
