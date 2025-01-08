@@ -24,7 +24,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # 添加 Notion 测试步骤
+      # 创建 .nojekyll 文件
+      - name: Create .nojekyll file
+        run: touch .nojekyll
+
+      # Notion 测试步骤
       - name: Test Notion Connection
         run: |
           npm install @notionhq/client dotenv
@@ -33,6 +37,7 @@ jobs:
           NOTION_API_SECRET: ${{ secrets.NOTION_API_SECRET }}
           DATABASE_ID: ${{ secrets.DATABASE_ID }}
 
+      # 构建步骤
       - uses: withastro/action@v3
         with:
           path: .
@@ -42,13 +47,21 @@ jobs:
           NOTION_API_SECRET: ${{ secrets.NOTION_API_SECRET }}
           DATABASE_ID: ${{ secrets.DATABASE_ID }}
 
-      # 添加缓存获取步骤
+      # 缓存获取步骤
       - name: Fetch Blog Contents Cache
         run: npm run cache:fetch
         env:
           NOTION_API_SECRET: ${{ secrets.NOTION_API_SECRET }}
           DATABASE_ID: ${{ secrets.DATABASE_ID }}
 
+      # 配置 GitHub Pages
+      - name: Setup Pages
+        uses: actions/configure-pages@v3
+        with:
+          enablement: true
+          static_site_generator: astro
+
+      # 部署步骤
       - uses: peaceiris/actions-gh-pages@v3
         with:
           personal_token: ${{ secrets.GIT_TOKEN }}
@@ -57,4 +70,6 @@ jobs:
           publish_dir: ./dist
           commit_message: "Deploy: ${{ github.event.head_commit.message }}"
           keep_files: true
-          enable_jekyll: false 
+          enable_jekyll: false
+          # 确保 .nojekyll 文件被复制
+          exclude_assets: '' 
