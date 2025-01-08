@@ -1,11 +1,12 @@
-interface Env {
+import { Env } from '@cloudflare/workers-types';
+
+interface NotionEnv extends Env {
   NOTION_API_SECRET: string;
   DATABASE_ID: string;
 }
 
 export default {
-  async scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionContext) {
-    // 定时任务：同步 Notion 内容
+  async scheduled(event: ScheduledEvent, env: NotionEnv, ctx: ExecutionContext) {
     try {
       const response = await fetch('https://api.notion.com/v1/databases/' + env.DATABASE_ID + '/query', {
         method: 'POST',
@@ -38,8 +39,7 @@ export default {
     }
   },
 
-  async fetch(request: Request, env: Env, ctx: ExecutionContext) {
-    // 处理正常的页面请求
+  async fetch(request: Request, env: NotionEnv, ctx: ExecutionContext) {
     return fetch(request);
   }
 }; 
