@@ -4,29 +4,29 @@ on:
   push:
     branches: [ main ]
   workflow_dispatch:
-  schedule:
-    - cron: '0 0,12 * * *'
-
-# 顶层权限配置
-permissions:
-  contents: write
-  pages: write
-  id-token: write
-  deployments: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      
+      # 添加调试步骤
+      - name: Test Notion Connection
+        run: |
+          echo "Testing Notion connection..."
+          node scripts/test-notion.cjs
+        env:
+          NOTION_API_SECRET: ${{ secrets.NOTION_API_SECRET }}
+          DATABASE_ID: ${{ secrets.DATABASE_ID }}
 
-      # 构建和部署（使用缓存构建）
+      # 构建和部署
       - uses: withastro/action@v3
         with:
           path: .
           node-version: '20.18.1'
           package-manager: npm
-          command: build:cached  # 使用缓存构建命令
+          command: build:cached
         env:
           NOTION_API_SECRET: ${{ secrets.NOTION_API_SECRET }}
           DATABASE_ID: ${{ secrets.DATABASE_ID }}

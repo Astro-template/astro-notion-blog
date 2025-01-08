@@ -41,5 +41,5 @@ export default defineConfig({
     FeaturedImageDownloader(),
     PublicNotionCopier(),
   ],
-  output: 'static',
+  output: 'static'
 });
