@@ -32,6 +32,12 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      # 创建必要的目录
+      - name: Create directories
+        run: |
+          mkdir -p tmp
+          mkdir -p public/notion
+
       - name: Fetch Notion content
         run: npm run cache:fetch
         env:
@@ -45,6 +51,7 @@ jobs:
           NOTION_API_SECRET: ${{ secrets.NOTION_API_SECRET }}
           DATABASE_ID: ${{ secrets.DATABASE_ID }}
           CF_PAGES: true
+          SITE_URL: 'https://astro-notion-blog.pages.dev'  # 添加站点 URL
 
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/pages-action@v1
