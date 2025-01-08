@@ -9,7 +9,12 @@
     "noEmit": false,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "outDir": "dist"
+    "outDir": "dist",
+    "typeRoots": [
+      "./src/types.d.ts",
+      "./node_modules/@types",
+      "./node_modules/@cloudflare/workers-types"
+    ]
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules"]
