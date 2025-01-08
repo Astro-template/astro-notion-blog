@@ -7,35 +7,54 @@ on:
   schedule:
     - cron: '0 0,12 * * *'
 
+# 顶层权限配置
 permissions:
   contents: write
   pages: write
   id-token: write
+  deployments: write
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '20.18.1'
-          cache: 'npm'
-
-      - name: Install Dependencies
-        run: npm install
-
-      - name: Build Blog
-        run: npm run build:cached
+      # 添加 Notion 测试步骤
+      - name: Test Notion Connection
+        run: |
+          npm install @notionhq/client dotenv
+          node scripts/test-notion.cjs
         env:
           NOTION_API_SECRET: ${{ secrets.NOTION_API_SECRET }}
           DATABASE_ID: ${{ secrets.DATABASE_ID }}
 
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+      - uses: withastro/action@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist 
+          path: .
+          node-version: '20.18.1'
+          package-manager: npm
+        env:
+          NOTION_API_SECRET: ${{ secrets.NOTION_API_SECRET }}
+          DATABASE_ID: ${{ secrets.DATABASE_ID }}
+
+      # 添加缓存获取步骤
+      - name: Fetch Blog Contents Cache
+        run: npm run cache:fetch
+        env:
+          NOTION_API_SECRET: ${{ secrets.NOTION_API_SECRET }}
+          DATABASE_ID: ${{ secrets.DATABASE_ID }}
+
+      - uses: peaceiris/actions-gh-pages@v3
+        with:
+          personal_token: ${{ secrets.GIT_TOKEN }}
+          external_repository: 1staihub/1staihub.github.io
+          publish_branch: main
+          publish_dir: ./dist
+          commit_message: "Deploy: ${{ github.event.head_commit.message }}"
+          keep_files: true
+          enable_jekyll: false 
