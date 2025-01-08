@@ -1,11 +1,14 @@
 name: Deploy to Cloudflare Pages
 
 on:
+  # 代码推送时触发
   push:
     branches: [ main ]
+  # 支持手动触发
   workflow_dispatch:
+  # 定时触发（每天早8点和晚8点）
   schedule:
-    - cron: '0 0,12 * * *'  # 每天 UTC 0:00 和 12:00 运行
+    - cron: '0 0,12 * * *'  # UTC 时间，对应北京时间 8:00 和 20:00
 
 jobs:
   deploy:
@@ -28,24 +31,6 @@ jobs:
         with:
           node-version: '20.18.1'
           cache: 'npm'
-          registry-url: 'https://registry.npmjs.org'
-
-      # 配置 npm
-      - name: Configure npm
-        run: |
-          npm config set registry https://registry.npmjs.org/
-          npm config set fetch-retry-maxtimeout 600000
-          npm config set fetch-retry-mintimeout 10000
-          npm config set fetch-retries 5
-
-      # 安装依赖（带重试）
-      - name: Install dependencies
-        run: |
-          for i in {1..3}; do
-            npm install && break
-            echo "Retry $i..."
-            sleep 5
-          done
 
       # 创建必要的目录
       - name: Create directories
@@ -53,30 +38,16 @@ jobs:
           mkdir -p tmp
           mkdir -p public/notion
 
-      # 测试 Notion 连接
-      - name: Test Notion API
-        run: |
-          echo "Testing Notion API..."
-          curl -X POST "https://api.notion.com/v1/databases/${{ secrets.DATABASE_ID }}/query" \
-            -H "Authorization: Bearer ${{ secrets.NOTION_API_SECRET }}" \
-            -H "Notion-Version: 2022-06-28" \
-            -H "Content-Type: application/json" \
-            -d '{
-              "filter": {
-                "property": "Published",
-                "checkbox": {
-                  "equals": true
-                }
-              }
-            }' | jq .
+      - name: Install dependencies
+        run: npm install
 
+      # 获取 Notion 内容
       - name: Fetch Notion content
         run: npm run cache:fetch
         env:
           NOTION_API_SECRET: ${{ secrets.NOTION_API_SECRET }}
           DATABASE_ID: ${{ secrets.DATABASE_ID }}
           CACHE_CONCURRENCY: "5"
-          DEBUG: "true"  # 启用调试输出
 
       - name: Build
         run: npm run build:cached
@@ -84,8 +55,6 @@ jobs:
           NOTION_API_SECRET: ${{ secrets.NOTION_API_SECRET }}
           DATABASE_ID: ${{ secrets.DATABASE_ID }}
           CF_PAGES: true
-          SITE_URL: 'https://astro-notion-blog.pages.dev'
-          DEBUG: "true"  # 启用调试输出
 
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/pages-action@v1

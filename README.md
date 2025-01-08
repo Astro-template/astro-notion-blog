@@ -24,43 +24,41 @@
    - 填写名称（如 "My Blog"）
    - 选择关联的工作区
    - 点击 "Submit" 创建集成
-   - 复制显示的 "Internal Integration Token" 作为 `NOTION_API_SECRET`
+   - 复制显示的 "Internal Integration Token"
 
 2. 获取数据库 ID：
    - 在 Notion 中打开你的数据库页面
-   - 从浏览器地址栏复制数据库 ID
-   - 地址格式：`https://www.notion.so/{workspace}/{database_id}?v={view_id}`
-   - 复制其中的 `database_id` 部分（32位字符）作为 `DATABASE_ID`
+   - 从地址栏复制数据库 ID（32位字符）
+   - 格式：`https://www.notion.so/{workspace}/{database_id}?v={view_id}`
 
 3. 授权集成访问：
    - 在数据库页面点击右上角的 "•••"
    - 选择 "Add connections"
    - 找到并选择你刚创建的集成
 
-### 3. 配置 Cloudflare
+### 3. 部署到 Cloudflare Pages
 
-1. 注册 [Cloudflare 账号](https://dash.cloudflare.com/sign-up)
-2. 创建 API Token：
-   - 进入 [API Tokens 页面](https://dash.cloudflare.com/profile/api-tokens)
-   - 创建一个新的 Token，确保有 Pages 的编辑权限
-   - 复制生成的 Token 作为 `CLOUDFLARE_API_TOKEN`
+1. 登录 [Cloudflare Pages](https://pages.cloudflare.com)
 
-### 4. 配置 GitHub Secrets
+2. 创建新项目：
+   - 点击 "Create a project"
+   - 选择 "Connect to Git"
+   - 选择你的 GitHub 仓库
+   - 点击 "Begin setup"
 
-在你 fork 的仓库中添加以下 Secrets：
+3. 配置构建设置：
+   - 项目名称：`astro-notion-blog`
+   - 生产分支：`main`
+   - 构建设置：
+     - Framework preset: Astro
+     - Build command: `npm run build:cached`
+     - Build output directory: `dist`
+   - 环境变量：
+     - `NOTION_API_SECRET`: Notion API 密钥
+     - `DATABASE_ID`: Notion 数据库 ID
+     - `NODE_VERSION`: 20.18.1
 
-1. 进入 Settings -> Secrets and variables -> Actions
-2. 添加以下 secrets：
-   - `NOTION_API_SECRET`: Notion API 密钥
-   - `DATABASE_ID`: Notion 数据库 ID
-   - `CLOUDFLARE_API_TOKEN`: Cloudflare API Token
-
-### 5. 启用 GitHub Actions
-
-工作流会自动：
-- 在代码推送时触发部署
-- 每天早 8 点和晚 8 点自动更新内容
-- 支持手动触发部署
+4. 点击 "Save and Deploy"
 
 ## 本地开发
 
