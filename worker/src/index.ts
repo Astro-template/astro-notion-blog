@@ -3,53 +3,22 @@ import { Client } from "@notionhq/client";
 export default {
   async scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionContext) {
     try {
+      // 1. 检查 Notion 内容更新
       const notion = new Client({ auth: env.NOTION_API_SECRET });
-      
-      // 获取所有已发布的页面
       const response = await notion.databases.query({
         database_id: env.DATABASE_ID,
         filter: {
-          and: [
-            {
-              property: 'Published',
-              checkbox: {
-                equals: true
-              }
-            },
-            {
-              property: 'Date',
-              date: {
-                on_or_before: new Date().toISOString()
-              }
-            }
-          ]
+          property: 'Published',
+          checkbox: { equals: true }
         }
       });
 
-      if (!response.results || !Array.isArray(response.results)) {
-        throw new Error('Invalid response from Notion API');
+      // 只在发现新内容时触发重新构建
+      if (response.results.length > 0) {
+        await fetch('YOUR_DEPLOY_HOOK_URL', { method: 'POST' });
       }
-
-      // 获取每个页面的区块内容
-      for (const page of response.results) {
-        const blocks = await notion.blocks.children.list({
-          block_id: page.id
-        });
-
-        if (!blocks.results) {
-          console.error(`Failed to fetch blocks for page ${page.id}`);
-          continue;
-        }
-      }
-
-      // 触发页面重新构建
-      await fetch('https://api.cloudflare.com/client/v4/pages/webhooks/deploy_hooks/YOUR_DEPLOY_HOOK', {
-        method: 'POST'
-      });
-
     } catch (error) {
       console.error('Error:', error);
-      throw error;
     }
   },
 

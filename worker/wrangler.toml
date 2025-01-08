@@ -7,7 +7,7 @@ NOTION_API_SECRET = ""
 DATABASE_ID = ""
 
 [triggers]
-crons = ["0 0,12 * * *"]  # 每天 UTC 0:00 和 12:00 运行
+crons = ["0 6,18 * * *"]  # UTC 时间，对应北京时间 14:00 和 02:00
 
 [build]
 command = "npm run build" 

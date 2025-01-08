@@ -79,6 +79,7 @@ jobs:
           DATABASE_ID: ${{ secrets.DATABASE_ID }}
           CACHE_CONCURRENCY: "5"
 
+      # 构建静态页面
       - name: Build
         run: npm run build:cached
         env:

@@ -2,10 +2,10 @@
   "name": "notion-blog-worker",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
-    "build": "wrangler build",
-    "deploy": "wrangler deploy",
-    "dev": "wrangler dev"
+    "build": "tsc",
+    "deploy": "wrangler deploy"
   },
   "dependencies": {
     "@notionhq/client": "^2.2.5"
