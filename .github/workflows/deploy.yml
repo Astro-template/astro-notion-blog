@@ -1,30 +1,17 @@
-name: Deploy to Cloudflare Pages
+name: Deploy to Cloudflare
 
 on:
-  # 代码推送时触发
   push:
     branches: [ main ]
-  # 支持手动触发
   workflow_dispatch:
-  # 定时触发（每天早8点和晚8点）
   schedule:
     - cron: '0 0,12 * * *'  # UTC 时间，对应北京时间 8:00 和 20:00
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      # 自动获取 Account ID
-      - name: Fetch Account ID
-        id: fetch_account_id
-        run: |
-          ACCOUNT_ID=$(curl -X GET "https://api.cloudflare.com/client/v4/accounts" \
-            -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}" \
-            -H "Content-Type: application/json" | jq -r '.result[0].id')
-          echo "ACCOUNT_ID=$ACCOUNT_ID" >> $GITHUB_ENV
-          echo "Account ID: $ACCOUNT_ID"
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -32,14 +19,28 @@ jobs:
           node-version: '20.18.1'
           cache: 'npm'
 
-      # 创建必要的目录
-      - name: Create directories
+      # 自动获取 Account ID
+      - name: Fetch Account ID
+        id: fetch_account_id
         run: |
-          mkdir -p tmp
-          mkdir -p public/notion
+          ACCOUNT_ID=$(curl -X GET "https://api.cloudflare.com/client/v4/accounts" \
+            -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}" \
+            -H "Content-Type:application/json" | jq -r '.result[0].id')
+          echo "account_id=$ACCOUNT_ID" >> $GITHUB_OUTPUT
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
 
       - name: Install dependencies
-        run: npm install
+        run: |
+          npm install
+          cd worker
+          npm install
+
+      # 构建 worker
+      - name: Build worker
+        run: |
+          cd worker
+          npx wrangler deploy src/index.ts --outdir dist --dry-run
 
       # 获取 Notion 内容
       - name: Fetch Notion content
@@ -56,11 +57,23 @@ jobs:
           DATABASE_ID: ${{ secrets.DATABASE_ID }}
           CF_PAGES: true
 
-      - name: Deploy to Cloudflare Pages
-        uses: cloudflare/pages-action@v1
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ env.ACCOUNT_ID }}
-          projectName: astro-notion-blog
-          directory: dist
-          branch: main
+      # 部署 worker
+      - name: Deploy worker
+        run: |
+          curl --fail-with-body -X PUT \
+            https://api.cloudflare.com/client/v4/accounts/${{ steps.fetch_account_id.outputs.account_id }}/workers/scripts/notion-blog-worker/content \
+            --header 'Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}' \
+            -F 'index.js=@worker/dist/index.js;type=application/javascript+module' \
+            -F 'metadata={"main_module": "index.js"}'
+
+      # 部署页面
+      - name: Deploy to Pages
+        run: |
+          npx wrangler pages deploy dist \
+            --project-name=astro-notion-blog \
+            --branch=main \
+            --commit-hash=${{ github.sha }} \
+            --commit-message="${{ github.event.head_commit.message || 'Manual deployment' }}"
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ steps.fetch_account_id.outputs.account_id }}
