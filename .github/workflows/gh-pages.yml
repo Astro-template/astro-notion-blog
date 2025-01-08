@@ -22,7 +22,9 @@ jobs:
 
       # 创建 .nojekyll 文件
       - name: Create .nojekyll file
-        run: touch .nojekyll
+        run: |
+          touch .nojekyll
+          touch dist/.nojekyll
 
       # Notion 测试步骤
       - name: Test Notion Connection
@@ -61,19 +63,4 @@ jobs:
           commit_message: "Deploy: ${{ github.event.head_commit.message }}"
           keep_files: true
           enable_jekyll: false
-          # 确保 .nojekyll 文件被复制
-          exclude_assets: '' 
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    permissions:
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v2 
+          force_orphan: true 
