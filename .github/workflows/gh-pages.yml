@@ -65,6 +65,6 @@ jobs:
           publish_branch: main
           publish_dir: ./dist
           commit_message: "Deploy: ${{ github.event.head_commit.message }}"
-          keep_files: true
+          keep_files: false
           enable_jekyll: false
           force_orphan: true 
