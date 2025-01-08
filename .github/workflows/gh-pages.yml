@@ -5,13 +5,34 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
-      # 添加调试步骤
+
+      # 设置 Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.18.1'
+          cache: 'npm'
+
+      # 安装依赖
+      - name: Install dependencies
+        run: npm install
+
+      # 创建 .nojekyll 文件
+      - name: Create .nojekyll file
+        run: |
+          touch .nojekyll
+          mkdir -p dist
+          touch dist/.nojekyll
+
+      # 测试 Notion 连接
       - name: Test Notion Connection
         run: |
           echo "Testing Notion connection..."
@@ -20,13 +41,9 @@ jobs:
           NOTION_API_SECRET: ${{ secrets.NOTION_API_SECRET }}
           DATABASE_ID: ${{ secrets.DATABASE_ID }}
 
-      # 构建和部署
-      - uses: withastro/action@v3
-        with:
-          path: .
-          node-version: '20.18.1'
-          package-manager: npm
-          command: build:cached
+      # 构建
+      - name: Build
+        run: npm run build:cached
         env:
           NOTION_API_SECRET: ${{ secrets.NOTION_API_SECRET }}
           DATABASE_ID: ${{ secrets.DATABASE_ID }}
