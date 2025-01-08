@@ -28,6 +28,9 @@ jobs:
 
       - name: Build with Cache
         run: npm run build:cached
+        env:
+          NOTION_API_SECRET: ${{ secrets.NOTION_API_SECRET }}
+          DATABASE_ID: ${{ secrets.DATABASE_ID }}
 
       - name: Publish to Cloudflare Pages
         uses: cloudflare/pages-action@v1
