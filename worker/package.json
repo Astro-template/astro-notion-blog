@@ -1,0 +1,17 @@
+{
+  "name": "notion-blog-worker",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "wrangler build",
+    "deploy": "wrangler deploy",
+    "dev": "wrangler dev"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.0.0",
+    "@notionhq/client": "^2.2.5",
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0",
+    "wrangler": "^3.0.0"
+  }
+} 

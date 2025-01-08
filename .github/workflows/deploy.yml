@@ -66,7 +66,7 @@ jobs:
       - name: Build worker
         run: |
           cd worker
-          npx wrangler deploy src/index.ts --dry-run --outdir dist
+          npm run build
         env:
           NOTION_API_SECRET: ${{ secrets.NOTION_API_SECRET }}
           DATABASE_ID: ${{ secrets.DATABASE_ID }}
@@ -89,11 +89,12 @@ jobs:
       # 部署 worker
       - name: Deploy worker
         run: |
-          curl --fail-with-body -X PUT \
-            https://api.cloudflare.com/client/v4/accounts/${{ steps.fetch_account_id.outputs.account_id }}/workers/scripts/notion-blog-worker/content \
-            --header 'Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}' \
-            -F 'index.js=@worker/dist/index.js;type=application/javascript+module' \
-            -F 'metadata={"main_module": "index.js"}'
+          cd worker
+          npm run deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          NOTION_API_SECRET: ${{ secrets.NOTION_API_SECRET }}
+          DATABASE_ID: ${{ secrets.DATABASE_ID }}
 
       # 部署页面
       - name: Deploy to Pages
