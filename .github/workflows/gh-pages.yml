@@ -20,12 +20,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # 安装依赖
+      - name: Install dependencies
+        run: npm install
+
       # 创建必要的目录和文件
       - name: Create necessary directories and files
         run: |
           mkdir -p dist
           touch .nojekyll
           touch dist/.nojekyll
+          echo "Disabling Jekyll" > .nojekyll
+          echo "Disabling Jekyll" > dist/.nojekyll
 
       # Notion 测试步骤
       - name: Test Notion Connection
@@ -52,6 +58,12 @@ jobs:
         env:
           NOTION_API_SECRET: ${{ secrets.NOTION_API_SECRET }}
           DATABASE_ID: ${{ secrets.DATABASE_ID }}
+
+      # 确保构建目录中有 .nojekyll
+      - name: Ensure .nojekyll exists
+        run: |
+          touch dist/.nojekyll
+          echo "Disabling Jekyll" > dist/.nojekyll
 
       # 部署到外部仓库
       - name: Deploy to External Repository
