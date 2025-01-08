@@ -10,7 +10,4 @@ DATABASE_ID = ""       # 将在部署时通过环境变量注入
 crons = ["0 0,12 * * *"]  # 每天 UTC 0:00 和 12:00 运行
 
 [build]
-command = ""  # 让 wrangler 处理构建
-
-[pages]
-pages_build_output_dir = "dist"  # 指定静态文件目录 
+command = "npm run build"  # 使用 worker 的构建命令 
