@@ -99,9 +99,14 @@ jobs:
       # 部署页面
       - name: Deploy to Pages
         run: |
+          # 创建项目（如果不存在）
+          npx wrangler pages project create astro-notion-blog --production-branch=main || true
+          
+          # 部署
           npx wrangler pages deploy dist \
             --project-name=astro-notion-blog \
             --branch=main \
+            --commit-dirty=true \
             --commit-hash=${{ github.sha }} \
             --commit-message="${{ github.event.head_commit.message || 'Manual deployment' }}"
         env:
