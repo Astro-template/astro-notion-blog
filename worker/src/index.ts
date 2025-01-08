@@ -1,4 +1,5 @@
 import { Env } from '@cloudflare/workers-types';
+import { Client } from "@notionhq/client";
 
 interface NotionEnv extends Env {
   NOTION_API_SECRET: string;
@@ -8,25 +9,20 @@ interface NotionEnv extends Env {
 export default {
   async scheduled(event: ScheduledEvent, env: NotionEnv, ctx: ExecutionContext) {
     try {
-      const response = await fetch('https://api.notion.com/v1/databases/' + env.DATABASE_ID + '/query', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${env.NOTION_API_SECRET}`,
-          'Notion-Version': '2022-06-28',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          filter: {
-            property: 'Published',
-            checkbox: {
-              equals: true
-            }
+      const notion = new Client({ auth: env.NOTION_API_SECRET });
+      
+      const response = await notion.databases.query({
+        database_id: env.DATABASE_ID,
+        filter: {
+          property: 'Published',
+          checkbox: {
+            equals: true
           }
-        })
+        }
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to fetch Notion content');
+      if (!response.results || !Array.isArray(response.results)) {
+        throw new Error('Invalid response from Notion API');
       }
 
       // 触发页面重新构建
