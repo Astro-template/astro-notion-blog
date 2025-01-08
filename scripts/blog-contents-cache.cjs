@@ -54,7 +54,6 @@ const getAllPages = async () => {
 
 (async () => {
   const pages = await getAllPages();
-
   const concurrency = parseInt(process.env.CACHE_CONCURRENCY || '1', 10);
 
   const progressBar = new cliProgress.SingleBar(
@@ -69,7 +68,6 @@ const getAllPages = async () => {
       return new Promise((resolve) => {
         const command = `NX_BRANCH=main npx nx run astro-notion-blog:_fetch-notion-blocks ${page.id} ${page.last_edited_time}`;
         const options = { timeout: 60000 };
-
         exec(command, options, (err, stdout, stderr) => {
           if (err) {
             console.error(`exec error: ${err}`);

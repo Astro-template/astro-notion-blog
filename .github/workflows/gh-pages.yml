@@ -20,42 +20,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # 安装依赖
-      - name: Install dependencies
-        run: npm install
-
-      # Notion 测试步骤
-      - name: Test Notion Connection
-        run: |
-          npm install @notionhq/client dotenv
-          node scripts/test-notion.cjs
-        env:
-          NOTION_API_SECRET: ${{ secrets.NOTION_API_SECRET }}
-          DATABASE_ID: ${{ secrets.DATABASE_ID }}
-
-      # 构建步骤
+      # 构建和部署（使用缓存构建）
       - uses: withastro/action@v3
         with:
           path: .
           node-version: '20.18.1'
           package-manager: npm
+          command: build:cached  # 使用缓存构建命令
         env:
           NOTION_API_SECRET: ${{ secrets.NOTION_API_SECRET }}
           DATABASE_ID: ${{ secrets.DATABASE_ID }}
 
-      # 缓存获取步骤
-      - name: Fetch Blog Contents Cache
-        run: npm run cache:fetch
-        env:
-          NOTION_API_SECRET: ${{ secrets.NOTION_API_SECRET }}
-          DATABASE_ID: ${{ secrets.DATABASE_ID }}
-
-      # 禁用 Jekyll
-      - name: Disable Jekyll
-        run: |
-          touch dist/.nojekyll
-
-      # 直接部署到目标仓库
+      # 部署到外部仓库
       - name: Deploy to External Repository
         uses: peaceiris/actions-gh-pages@v3
         with:
@@ -64,8 +40,4 @@ jobs:
           publish_branch: main
           publish_dir: ./dist
           commit_message: "Deploy: ${{ github.event.head_commit.message }}"
-          keep_files: false
-          enable_jekyll: false
-          force_orphan: true
-          user_name: 'github-actions[bot]'
-          user_email: 'github-actions[bot]@users.noreply.github.com' 
+          force_orphan: true 
