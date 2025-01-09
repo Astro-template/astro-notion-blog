@@ -2,6 +2,8 @@
 
 基于 Astro 和 Notion API 构建的博客系统。支持自动部署到 Cloudflare Pages。
 
+🌏 [在线演示](https://prompt.ouraihub.com/)
+
 ## 特性
 
 - 🚀 基于 Astro 构建，性能优异
@@ -9,6 +11,14 @@
 - 🔄 自动同步 Notion 内容
 - ⚡ 部署在 Cloudflare Pages
 - 🕒 支持定时更新（每天早 8 点和晚 8 点）
+
+## 文档
+
+详细的配置和使用说明请查看以下文档：
+
+- [环境配置指南](docs/SETUP.md) - 包含开发环境要求、Notion配置、Cloudflare配置等
+- [代码同步配置](docs/SYNC.md) - 如何配置代码同步到其他平台（如Gitee、GitCode等）
+- [实现细节说明](docs/IMPLEMENTATION.md) - 项目的技术实现细节
 
 ## 部署步骤
 
