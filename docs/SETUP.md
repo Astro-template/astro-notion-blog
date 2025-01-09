@@ -1,10 +1,6 @@
 
 # 环境配置文档
 
-
-```markdown
-# 环境配置文档
-
 ## 1. 开发环境要求
 
 ### 1.1 基础环境
@@ -172,6 +168,6 @@ npm run build:cached
 ### 8.3 类型检查
 - 运行 `npm run lint` 检查代码
 - 使用 `npm run format` 格式化代码
-```
+
 
 
