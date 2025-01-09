@@ -1,0 +1,59 @@
+name: Sync to Multiple Repositories
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  sync-repos:
+    runs-on: ubuntu-latest
+    steps:
+      # 检查配置
+      - name: Check SYNC_CONFIG
+        if: ${{ !secrets.SYNC_CONFIG }}
+        run: |
+          echo "Error: SYNC_CONFIG is not configured"
+          echo "Please add SYNC_CONFIG secret with your repository configurations"
+          exit 1
+
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          
+      - name: Install yq
+        run: |
+          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          sudo chmod a+x /usr/local/bin/yq
+          
+      - name: Sync to Multiple Repositories
+        run: |
+          # 将配置写入临时文件
+          echo "$SYNC_CONFIG" > sync-config.yml
+          
+          # 使用 JSON 格式处理配置
+          yq e -o=json '.repositories | to_entries | .[] | select(.value.enabled == true)' sync-config.yml | \
+          jq -c '.' | while read -r repo; do
+            platform=$(echo "$repo" | jq -r '.key')
+            username=$(echo "$repo" | jq -r '.value.username')
+            repo_name=$(echo "$repo" | jq -r '.value.repo')
+            token=$(echo "$repo" | jq -r '.value.token')
+            domain=$(echo "$repo" | jq -r '.value.domain')
+            
+            echo "Syncing to $platform..."
+            
+            # 添加远程仓库并推送
+            git remote add "$platform" \
+              "https://$username:$token@$domain/$repo_name.git"
+            git push --all --force "$platform"
+            git push --tags --force "$platform"
+            
+            # 清理远程仓库配置
+            git remote remove "$platform"
+          done
+          
+          # 清理临时文件
+          rm sync-config.yml
+        env:
+          SYNC_CONFIG: ${{ secrets.SYNC_CONFIG }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
