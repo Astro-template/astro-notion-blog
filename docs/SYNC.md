@@ -38,21 +38,75 @@ repositories:
 
 ## 2. 获取访问令牌
 
-### 2.1 Gitee
+### 2.1 国内平台
+
+#### Gitee
 1. 访问 https://gitee.com/profile/personal_access_tokens
 2. 点击 "生成新令牌"
 3. 勾选 "repo" 权限
 4. 生成并复制令牌
 
-### 2.2 GitCode
-1. 访问 GitCode 个人设置
-2. 生成访问令牌
-3. 确保有仓库读写权限
+#### GitCode (CSDN)
+1. 访问 https://gitcode.net/-/profile/personal_access_tokens
+2. 设置令牌名称和过期时间
+3. 勾选 "api"、"read_repository"、"write_repository" 权限
+4. 点击创建并保存令牌
 
-### 2.3 Coding
-1. 访问个人账户设置
-2. 创建访问令牌
-3. 选择适当的权限范围
+#### Coding (腾讯)
+1. 访问 https://coding.net/user/account/setting/tokens
+2. 点击 "新建访问令牌"
+3. 选择 "project:depot" 权限
+4. 创建并复制令牌
+
+#### JiHuLab (极狐)
+1. 访问 https://jihulab.com/-/profile/personal_access_tokens
+2. 设置令牌名称和过期时间
+3. 勾选 "api"、"read_repository"、"write_repository" 权限
+4. 创建令牌
+
+#### 阿里云代码托管
+1. 访问 https://codeup.aliyun.com/profile/personal-access-tokens
+2. 点击 "创建个人访问令牌"
+3. 选择仓库读写权限
+4. 创建并保存令牌
+
+### 2.2 国外平台
+
+#### GitLab
+1. 访问 https://gitlab.com/-/profile/personal_access_tokens
+2. 设置令牌名称和过期时间
+3. 勾选 "api"、"read_repository"、"write_repository" 权限
+4. 创建令牌
+
+#### Bitbucket
+1. 访问 https://bitbucket.org/account/settings/app-passwords/
+2. 点击 "Create app password"
+3. 选择 "Repository Read" 和 "Repository Write" 权限
+4. 创建并保存密码
+
+#### Azure DevOps
+1. 访问 https://dev.azure.com/YOUR-ORG/_usersSettings/tokens
+2. 点击 "New Token"
+3. 选择 "Code (Read & Write)" 权限
+4. 创建并保存令牌
+
+#### AWS CodeCommit
+1. 访问 https://console.aws.amazon.com/iam/home#/security_credentials
+2. 在 "HTTPS Git credentials for AWS CodeCommit" 部分
+3. 点击 "Generate credentials"
+4. 下载并保存凭证
+
+#### Google Cloud Source
+1. 访问 https://source.cloud.google.com/user/settings/tokens
+2. 点击 "Create token"
+3. 设置权限范围
+4. 创建并保存令牌
+
+注意事项：
+1. 令牌创建后请立即保存，大多数平台只显示一次
+2. 建议设置合适的过期时间
+3. 仅选择必要的最小权限范围
+4. 定期检查和更新令牌
 
 ## 3. 同步触发方式
 
@@ -151,5 +205,66 @@ repositories:
     token: coding-token
     domain: e.coding.net
 ```
+
+## 7. 支持的代码平台域名
+
+以下是常见代码托管平台的域名配置：
+
+### 7.1 国内平台
+```yaml
+# Gitee
+domain: gitee.com
+
+# GitCode (CSDN)
+domain: gitcode.com
+
+# Coding (腾讯)
+domain: e.coding.net
+
+# JiHuLab (极狐)
+domain: jihulab.com
+
+# 阿里云代码托管
+domain: codeup.aliyun.com
+
+# GitLink
+domain: gitlink.org.cn
+
+# GitChina
+domain: gitchina.org
+```
+
+### 7.2 国外平台
+```yaml
+# GitHub
+domain: github.com
+
+# GitLab
+domain: gitlab.com
+
+# Bitbucket
+domain: bitbucket.org
+
+# Azure DevOps
+domain: dev.azure.com
+
+# AWS CodeCommit
+domain: git-codecommit.{region}.amazonaws.com
+
+# Google Cloud Source
+domain: source.developers.google.com
+```
+
+注意事项：
+1. 不同平台的仓库路径格式可能不同
+2. 某些平台可能需要特殊的认证方式
+3. 建议先测试仓库访问权限再配置同步
+4. 部分平台可能有 API 调用限制
+
+建议：
+- 优先选择访问稳定的平台
+- 确认平台支持 Git 协议
+- 验证域名是否可以正常访问
+- 检查平台是否支持令牌认证
 
 
