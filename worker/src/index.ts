@@ -3,7 +3,7 @@ import { Client } from "@notionhq/client";
 export default {
   async scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionContext) {
     try {
-      // 1. 检查 Notion 内容更新
+      // 检查是否有已发布的内容
       const notion = new Client({ auth: env.NOTION_API_SECRET });
       const response = await notion.databases.query({
         database_id: env.DATABASE_ID,
@@ -13,7 +13,7 @@ export default {
         }
       });
 
-      // 只在发现新内容时触发重新构建
+      // 有新内容时触发重建
       if (response.results.length > 0) {
         await fetch('YOUR_DEPLOY_HOOK_URL', { method: 'POST' });
       }
